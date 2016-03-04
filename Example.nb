@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     61592,       2044]
-NotebookOptionsPosition[     58542,       1933]
-NotebookOutlinePosition[     59156,       1955]
-CellTagsIndexPosition[     59113,       1952]
+NotebookDataLength[     59766,       1972]
+NotebookOptionsPosition[     56717,       1861]
+NotebookOutlinePosition[     57330,       1883]
+CellTagsIndexPosition[     57287,       1880]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1815,124 +1815,52 @@ Cell[BoxData[
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"QuarkContract", "[", 
-  RowBox[{
-   RowBox[{"Uncontract", "[", 
-    RowBox[{"Contract", "[", "SeqProp", "]"}], "]"}], "*", 
+ RowBox[{
+  RowBox[{"QuarkContract", "[", 
    RowBox[{
-    RowBox[{"DEInverse", "[", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"d", ",", "d"}], "}"}], ",", 
-      RowBox[{"{", 
-       RowBox[{"y", ",", "z"}], "}"}]}], "]"}], "[", 
+    RowBox[{"Uncontract", "[", 
+     RowBox[{"Contract", "[", "SeqProp", "]"}], "]"}], "*", 
     RowBox[{
-     RowBox[{"CI", "[", 
-      RowBox[{"{", 
-       RowBox[{"a2", ",", "a3"}], "}"}], "]"}], ",", 
-     RowBox[{"SI", "[", 
-      RowBox[{"{", 
-       RowBox[{"mu2", ",", "mu3"}], "}"}], "]"}]}], "]"}]}], "]"}]], "Input",
+     RowBox[{"DEInverse", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"d", ",", "d"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"y", ",", "z"}], "}"}]}], "]"}], "[", 
+     RowBox[{
+      RowBox[{"CI", "[", 
+       RowBox[{"{", 
+        RowBox[{"a2", ",", "a3"}], "}"}], "]"}], ",", 
+      RowBox[{"SI", "[", 
+       RowBox[{"{", 
+        RowBox[{"mu2", ",", "mu3"}], "}"}], "]"}]}], "]"}]}], "]"}], "//", 
+  "InputForm"}]], "Input",
  CellChangeTimes->{{3.66610145806999*^9, 3.666101458071835*^9}, {
   3.666101644523171*^9, 3.666101653995225*^9}, {3.6661018510302277`*^9, 
   3.666101875373633*^9}, {3.666101932660445*^9, 3.666101993778775*^9}, {
   3.6661020799131308`*^9, 3.666102084344754*^9}, {3.666102143519677*^9, 
-  3.666102150895884*^9}, {3.6661023412043056`*^9, 3.666102347666772*^9}}],
+  3.666102150895884*^9}, {3.6661023412043056`*^9, 3.666102347666772*^9}, {
+  3.666103015150326*^9, 3.6661030172676497`*^9}}],
 
-Cell[BoxData[
- FormBox[
-  RowBox[{
-   RowBox[{
-    RowBox[{"(", 
-     RowBox[{
-      FormBox[
-       TagBox[
-        RowBox[{"quarkContract14", "(", 
-         RowBox[{
-          RowBox[{"OAT", ".", "P", ".", "OA", ".", 
-           FormBox[
-            TagBox[
-             RowBox[{
-              SuperscriptBox["S", "u"], "(", "x", ",", "y", ")"}],
-             DisplayForm],
-            TraditionalForm], ".", 
-           TemplateBox[{"GammaBT"},
-            "Transpose"]}], ",", 
-          FormBox[
-           TagBox[
-            RowBox[{
-             SuperscriptBox["S", "u"], "(", "x", ",", "y", ")"}],
-            DisplayForm],
-           TraditionalForm]}], ")"}],
-        DisplayForm],
-       TraditionalForm], ".", "GammaB"}], ")"}], "\[InvisibleApplication]", 
-    RowBox[{"(", 
-     RowBox[{
-      FormBox[
-       TagBox[
-        SuperscriptBox["", 
-         RowBox[{"a1", "a3"}]],
-        DisplayForm],
-       TraditionalForm], ",", 
-      FormBox[
-       TagBox[
-        SubscriptBox["", 
-         RowBox[{"mu1", "mu3"}]],
-        DisplayForm],
-       TraditionalForm]}], ")"}]}], "+", 
-   RowBox[{
-    RowBox[{"(", 
-     RowBox[{
-      RowBox[{"transposeSpin", "(", 
-       FormBox[
-        TagBox[
-         RowBox[{"quarkContract34", "(", 
-          RowBox[{
-           RowBox[{
-            FormBox[
-             TagBox[
-              RowBox[{
-               SuperscriptBox["S", "u"], "(", "x", ",", "y", ")"}],
-              DisplayForm],
-             TraditionalForm], ".", 
-            TemplateBox[{"GammaBT"},
-             "Transpose"]}], ",", 
-           RowBox[{"OAT", ".", "P", ".", "OA", ".", 
-            FormBox[
-             TagBox[
-              RowBox[{
-               SuperscriptBox["S", "u"], "(", "x", ",", "y", ")"}],
-              DisplayForm],
-             TraditionalForm]}]}], ")"}],
-         DisplayForm],
-        TraditionalForm], ")"}], ".", "GammaB"}], ")"}], 
-    "\[InvisibleApplication]", 
-    RowBox[{"(", 
-     RowBox[{
-      FormBox[
-       TagBox[
-        SuperscriptBox["", 
-         RowBox[{"a1", "a3"}]],
-        DisplayForm],
-       TraditionalForm], ",", 
-      FormBox[
-       TagBox[
-        SubscriptBox["", 
-         RowBox[{"mu1", "mu3"}]],
-        DisplayForm],
-       TraditionalForm]}], ")"}]}]}], TraditionalForm]], "Output",
+Cell["\<\
+(quarkContract[{1, 4}, OAT . P . OA . DE[{u, u}, {x, y}] . Transpose[GammaBT], 
+    DE[{u, u}, {x, y}]] . GammaB)[CI[{a1, a3}], SI[{mu1, mu3}]] + 
+ (transposeSpin[quarkContract[{3, 4}, DE[{u, u}, {x, y}] . Transpose[GammaBT], 
+     OAT . P . OA . DE[{u, u}, {x, y}]]] . GammaB)[CI[{a1, a3}], SI[{mu1, \
+mu3}]]\
+\>", "Output",
  CellChangeTimes->{
   3.666101458934403*^9, 3.6661015141146517`*^9, {3.6661016189560747`*^9, 
    3.666101654368582*^9}, {3.666101852451694*^9, 3.6661018755952883`*^9}, {
    3.666101934526675*^9, 3.6661019946402884`*^9}, {3.666102069243819*^9, 
    3.6661020846567593`*^9}, {3.666102147592494*^9, 3.666102151291951*^9}, {
-   3.666102343947446*^9, 3.666102348205941*^9}}]
+   3.666102343947446*^9, 3.666102348205941*^9}, 3.666103017607689*^9}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{1280, 733},
-WindowMargins->{{576, Automatic}, {Automatic, 23}},
+WindowMargins->{{Automatic, 287}, {Automatic, 0}},
 PrintingCopies->1,
 PrintingPageRange->{1, Automatic},
 PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
@@ -2041,8 +1969,8 @@ Cell[48419, 1589, 5222, 185, 84, "Output"]
 Cell[CellGroupData[{
 Cell[53690, 1780, 1193, 32, 97, "Subsection"],
 Cell[CellGroupData[{
-Cell[54908, 1816, 937, 23, 36, "Input"],
-Cell[55848, 1841, 2654, 87, 105, "Output"]
+Cell[54908, 1816, 1040, 26, 73, "Input"],
+Cell[55951, 1844, 726, 12, 104, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
