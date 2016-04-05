@@ -132,6 +132,11 @@ QuarkContract::usage="QuarkContract[x] computes quark contractions and returns
 expressions suitable for QDP++."
 ToQDP::usage="ToQDP[x,reps:{}, fn:\"stdout\" ] writes the CForm of x to file fn using replacements given in reps."
 TForm::usage="Helper function to enable TeXForm of color and spin objects."
+Canonicalize::usage="EXPERIMENTAL: Canonicalize[expr,y,dir] tries to generate canonical
+expressions, especially rewriting shifts in direction +/- dir to QDP shifts."
+shift::usage="QDP shift function."
+FORWARD
+BACKWARD
 (*GenerateSource::usage="GenerateSource[x,reps:{}, fn:\"stdout\" ] writes the
 CForm of x to file fn using replacements given in reps."*)
 
@@ -526,6 +531,49 @@ part1=expr/.{
 };
 WriteString["stdout",ToString[part1,TeXForm]]
 ]
+
+
+Canonicalize[expr_, y_, si_] := 
+ Block[{expr1}, 
+  expr1 = Expand[
+    QuarkContract[expr]]; (Canonicalize1[#, y, si] & /@ 
+     Expand[expr1 + REMOVEINTHEND]) /. REMOVEINTHEND -> 0]
+
+Canonicalize1[expr_, y_, si_] := 
+ Block[{props, repl, expr1}, props = Cases[expr, DE[__], \[Infinity]];
+   repl = Flatten[
+    DeleteCases[
+     If[FreeQ[(# /. DE[a__, {b__}] :> {b})[[1]], y], 
+        Rule[#, G5.adj[
+           ReplaceAll[#, 
+            DE[{xx__}, {bx_, cx_}] -> DE[{xx}, {cx, bx}]]].G5], 
+        NOMATCH] & /@ props, NOMATCH]];
+  shiftargs = 
+   Coefficient[#, 
+      si] & /@ (Cases[
+       Flatten[props /. 
+         DE[a__, {xx_, yy_}] :> {xx, yy}], _?(Not[FreeQ[#, y]] &)] /. 
+      y -> 0);
+  shiftsep = -Min[Flatten[Join[shiftargs, {0}]]];
+  
+  expr1 = expr /. repl;
+  doshift = 
+   Rule[#, # + shiftsep*si] & /@ 
+    Union[Flatten[
+      Flatten[props /. DE[a__, {xx_, yy_}] :> {xx, yy}] /. si -> 0]];
+  If[Length[doshift] > 0, expr1 /. doshift, expr1] /. 
+    func_[arg1___, {y + cy_., xx_ + si*a_.}, arg2___] :> 
+     makeshift[func[arg1, {y + cy, xx}, arg2], a, si] /. {func_[
+      arg1___, {yy_., xx_ + si*a_.}, arg2___] :> 
+     makeshift[func[arg1, {yy, xx}, arg2], a, si], 
+    func_[xx_ + si*a_.] :> makeshift[func[xx], a, si]}
+  ]
+
+makeshift[func_, sign_, dir_] := 
+ Block[{newfunc = func, $ri}, 
+  If[sign > 0, mv = FORWARD, mv = BACKWARD]; 
+  For[$ri = 0, $ri < Abs[sign], $ri++, 
+   newfunc = shift[newfunc, mv, dir]]; newfunc]
 
   End[]
 
