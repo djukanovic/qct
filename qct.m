@@ -175,9 +175,14 @@ LegacyWickContract1[expr_] :=
     NMM[FieldB[__], __] :> 0; Plus @@ DeleteCases[Union[tmp2], 0]]
 
 WickContract[expr_] := 
- Block[{}, 
-  If[Head[Distribute[expr]] === Plus, 
-   WickContract2[#] & /@ Distribute[expr], WickContract2[expr]]]
+Block[{expr1},
+ expr1=expr//. NonCommutativeMultiply[arg1___, a_.*(b_ + Plus[c__]), arg2___]
+:>
+  NonCommutativeMultiply[arg1, a*b, arg2] +
+   NonCommutativeMultiply[arg1, a*Plus[c], arg2];
+  If[Head[Distribute[expr1]] === Plus,
+   WickContract2[#] & /@ Distribute[expr1], WickContract2[expr1]]];
+
 
 QF[expr_] := (Head[expr] === Field) || (Head[expr] === FieldB)
 
