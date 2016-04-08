@@ -24,16 +24,6 @@ Format[TForm[(H_)[SI[{c_,d_}]]],TraditionalForm]:=
  DisplayForm[
   SubscriptBox[H, RowBox[{c, d}]]]
 
-Format[ CI[ {ci1_, ci2_}], 
-  TraditionalForm] := 
- DisplayForm[
-  SuperscriptBox["", RowBox[{ci1, ci2}]]]
-
-Format[ SI[ {ci1_, ci2_}], 
-  TraditionalForm] := 
- DisplayForm[
-  SubscriptBox["", RowBox[{ci1, ci2}]]]
-
 
 Format[DE[{ferm_, ferm_}, {x_ , y_} ] [CI[ {ci1_, ci2_}],SI[ {si1_, si2_}]], 
   TraditionalForm] := 
@@ -52,6 +42,23 @@ Format[DE[{ferm_, ferm_}, {x_ , y_} ],
  DisplayForm[
   RowBox[{SuperscriptBox[S,  
      ferm], "(", x, ",", y, ")"}]]
+
+MakeBoxes[(h_)[SI[{a_, b_}]], TraditionalForm] := 
+ SubscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], " ", ToString[b]}]]
+
+MakeBoxes[(h_)[CI[{a_, b_}]], TraditionalForm] := 
+ SuperscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], " ", ToString[b]}]]
+
+
+MakeBoxes[h_[CI[{a_,b_}],SI[{mu_,nu_}]], TraditionalForm] /; (h=!= DE || h =!=
+DEInverse):= 
+ SubsuperscriptBox[ToBoxes[HoldForm[h],TraditionalForm], RowBox[{ToString[mu], " ",
+ToString[nu]}],RowBox[{ToString[a]," ", ToString[b]}]]
+
+MakeBoxes[h_[SI[{mu_,nu_}],CI[{a_,b_}]], TraditionalForm] /; (h=!= DE || h =!=
+DEInverse):= 
+ SubsuperscriptBox[ToBoxes[HoldForm[h],TraditionalForm], RowBox[{ToString[mu], " ",
+ToString[nu]}],RowBox[{ToString[a]," ", ToString[b]}]]
 
 
 Format[Field[u_, a_, \[Alpha]_, x_], TraditionalForm] := 
