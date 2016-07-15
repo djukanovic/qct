@@ -44,20 +44,20 @@ Format[DE[{ferm_, ferm_}, {x_ , y_} ],
      ferm], "(", x, ",", y, ")"}]]
 
 MakeBoxes[(h_)[SI[{a_, b_}]], TraditionalForm] := 
- SubscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], " ", ToString[b]}]]
+ SubscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], "", ToString[b]}]]
 
 MakeBoxes[(h_)[CI[{a_, b_}]], TraditionalForm] := 
- SuperscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], " ", ToString[b]}]]
+ SuperscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], "", ToString[b]}]]
 
 
 MakeBoxes[h_[CI[{a_,b_}],SI[{mu_,nu_}]], TraditionalForm] /; (h=!= DE || h =!=
 DEInverse):= 
- SubsuperscriptBox[ToBoxes[HoldForm[h],TraditionalForm], RowBox[{ToString[mu], " ",
-ToString[nu]}],RowBox[{ToString[a]," ", ToString[b]}]]
+ SubsuperscriptBox[ToBoxes[HoldForm[h],TraditionalForm], RowBox[{ToString[mu], "",
+ToString[nu]}],RowBox[{ToString[a],"", ToString[b]}]]
 
 MakeBoxes[h_[SI[{mu_,nu_}],CI[{a_,b_}]], TraditionalForm] /; (h=!= DE || h =!=
 DEInverse):= 
- SubsuperscriptBox[ToBoxes[HoldForm[h],TraditionalForm], RowBox[{ToString[mu], " ",
+ SubsuperscriptBox[ToBoxes[HoldForm[h],TraditionalForm], RowBox[{ToString[mu], "",
 ToString[nu]}],RowBox[{ToString[a]," ", ToString[b]}]]
 
 
@@ -329,11 +329,13 @@ ReorderIndex[f1_,
   reind1 = Join[lind1, lover1];
   reind2 = Join[lind2, lover2];
   
+    tmpvar=Select[Last@
+       Reap[MapIndexed[Sow[#2, #1] &, Join[{alpha}, {beta}]]], 
+      Length[#] > 1 &];
+  If[tmpvar=={},Print[ReorderIndex1[f1,f2,{alpha},{beta},{eps1},{eps2},{si1},{si2}]]];
   remind =
    Delete[Join[{alpha}, {beta}], 
-    Select[Last@
-       Reap[MapIndexed[Sow[#2, #1] &, Join[{alpha}, {beta}]]], 
-      Length[#] > 1 &][[1]]];
+tmpvar[[1]]];
   name = Flatten[
     Select[Last@
        Reap[MapIndexed[Sow[#2, #1] &, Join[{alpha}, {beta}]]], 
@@ -385,14 +387,14 @@ res=  Contract[Expand[expr]]
      ReorderIndex[f1, 
       f2, {alpha1, alpha2}, {beta2, alpha2}, {a, b, c}, {d, e, f}, {b,
         b2}, {e1, e}]
-   /. Eps[a___, b_, c___]*
+   (*/. Eps[a___, b_, c___]*
      Eps[d___, e_, 
       f___]*(f1_)[CI[ {b_, b2___}], SI[{alpha1_, 
        alpha2_}]]*(f2_)[CI[ {e1___, e_}], SI[{beta1_, 
        beta2_}]]   /;Not[FreeQ[{d,f},b2]]&&Not[FreeQ[{a,c},e1]] :> 
     ReorderIndex[f1, 
      f2, {alpha1, alpha2}, {beta1, beta2}, {a, b, c}, {d, e, f}, {b, 
-      b2}, {e1, e}]
+      b2}, {e1, e}]*)
     //.{
        (H_)[CI[{a1_,a2_}],SI[{l1_,l2_}]]*(G_)[CI[{a2_,a1_}], SI[{l2_,l1_}]] :> trace[H.G] ,
        (H_)[CI[{a1_,a2_}],SI[{l1_,l2_}]]*(G_)[CI[{a2_,a1_}], SI[{l1_,l2_}]] :> trace[H.transposeSpin[G]] ,
