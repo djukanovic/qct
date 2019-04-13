@@ -121,6 +121,7 @@ Format[MyProd[
 
 (* Declaration of externally accessible functions *)
 
+GraphWC::usage="Visualization of Wick contracted expressions."
 adj::usage="Adjoint of the argument";
 G5::usage="gamma_5"
 ToTeXForm::usage="Write expressions in TeXForm"
@@ -212,7 +213,35 @@ WickContract1[expr_] :=
       NMM2[] -> 1} //. {DE[{ferm1_, ferm2_}, __][___] /; 
        ferm1 =!= ferm2 :> 0}; Plus @@ DeleteCases[Union[tmp2], 0]]
 
+ed = ({Black, {Arrowheads[{{1/2, 1/2, 
+        Graphics[{Black, 
+          Inset[Style[#3, Background -> White], {0, 0}, Automatic, 
+           Automatic, None]}]}, {0.05032098685208049`, 0.8`}}], 
+     Arrow[#1]}} &);
+vd = ({Black, Text[
+    Framed[#2, Background -> White, 
+     RoundingRadius -> Scaled[10000]], #1]} &);
 
+SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}];
+
+GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3},
+
+
+t1 = Expand[expr /. {NM -> Times, Dot -> Times}];
+t2 = Rule[#, 1] & /@ DeleteCases[Variables[t1], DE[__][__], \[Infinity]];
+t3 = t1 /. t2 //. Times[b___, a_?NumberQ, c___] -> Times[b, c]/. Plus -> List;
+ rul=FilterRules[{opts},Options[GraphPlot]];
+If[Length[Dimensions[t3]]==1,
+If[ Head[t3]=!=List,
+Show[GraphPlot[#,rul] & /@ 
+  Union[(Cases[#, DE[__][__], \[Infinity]] & /@ {{Expand[t3]}} //. 
+     DE[{a_, a_}, {x_, y_}][__] -> {x -> y, a})]],
+Show[{#}]&/@(GraphPlot[#,rul] & /@ 
+  Union[(Cases[#, DE[__][__], \[Infinity]] & /@ Expand[t3] //. 
+     DE[{a_, a_}, {x_, y_}][__] -> {x -> y, a})])
+]
+]
+]
 
 
 SetAttributes[DD, Orderless]
