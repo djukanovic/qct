@@ -157,30 +157,9 @@ NM[a___, -c__, b___] := -NM[a, c, b]
 
 Begin[ "Private`"]
 
-LegacyWickContract[expr_] := 
- Block[{}, 
-  If[Head[Distribute[expr]] === Plus, LegacyWickContract2[#] & /@Distribute[expr], 
-   LegacyWickContract2[expr]]]
 
 QF[expr_] := (Head[expr] === Field) || (Head[expr] === FieldB)
 
-LegacyWickContract2[expr_] := 
- Block[{res}, 
-  res=expr/.NonCommutativeMultiply->NM;
-  NM[NM @@ (DeleteCases[res, _?QF, \[Infinity]]), 
-   LegacyWickContract1[Cases[res, _?QF, \[Infinity]]]]/.NM->Times]
-
-LegacyWickContract1[expr_] := 
- Block[{tmpexpr}, tmpexpr = expr /. NM :> List; 
-  sgn = Signature[tmpexpr]; 
-  tmp1 = sgn*Signature[#]*NMM[#] & /@ Permutations[tmpexpr] //. 
-    NMM[{a__}] :> NMM[a];
-  tmp2 = tmp1 //. {NMM[xx___, Field[ferm1_, a_, b_, c_], 
-        FieldB[ferm2_, d_, e_, f_], yy___] :> 
-       DE[{ferm1, ferm2}, {f, c}][CI[{a,d}] , SI[{b, e}]]*NMM[xx, yy], 
-       NMM[] -> 1, 
-      DE[{ferm1_, ferm2_}, __][___] /; ferm1 =!= ferm2 :> 0} //. 
-    NMM[FieldB[__], __] :> 0; Plus @@ DeleteCases[Union[tmp2], 0]]
 
 WickContract[expr_] := 
 Block[{expr1},
