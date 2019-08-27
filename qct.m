@@ -144,6 +144,7 @@ TForm::usage="Helper function to enable TeXForm of color and spin objects."
 Canonicalize::usage="EXPERIMENTAL: Canonicalize[expr,y,dir] tries to generate canonical
 expressions, especially rewriting shifts in direction +/- dir to QDP shifts."
 shift::usage="QDP shift function."
+VertexRules::usge="Helper variable used to circumvent naming convention changes between Mathematica versions."
 FORWARD
 BACKWARD
 (*GenerateSource::usage="GenerateSource[x,reps:{}, fn:\"stdout\" ] writes the
@@ -228,10 +229,13 @@ vd = ({Black, Text[
     Framed[#2, Background -> White, 
      RoundingRadius -> Scaled[10000]], #1]} &);
 
+VertexRules=VertexCoordinateRules
+
 (* EdgeRenderingFunction, ... superseded in Mathematica v12 *)
 
 If[$VersionNumber>=12,
-SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True,EdgeStyle:>{{Background->White}}}],
+
+SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,EdgeStyle:>{{Background->White}}}];VertexRule=VertexCoordinates,
 SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}]];
 
 GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3,a,b,c,x,y},
