@@ -163,6 +163,7 @@ QF[expr_] := (Head[expr] === Field) || (Head[expr] === FieldB)
 
 WickContract[expr_] := 
 Block[{expr1},
+ (* Thread NCM over Plus *)
  expr1=expr//. NonCommutativeMultiply[arg1___, a_.*(b_ + Plus[c__]), arg2___]
 :>
   NonCommutativeMultiply[arg1, a*b, arg2] +
@@ -175,16 +176,22 @@ QF[expr_] := (Head[expr] === Field) || (Head[expr] === FieldB)
 
 WickContract2[expr_] := 
  Block[{res}, res = expr /. NonCommutativeMultiply -> NM;
+	(* Get all QuantumFields in a list, everything else treated as C-number *)
   NM[NM @@ (DeleteCases[res, _?QF, \[Infinity]]), 
     WickContract1[Cases[res, _?QF, \[Infinity]]]] /. NM -> Times]
 
 WickContract1[expr_] := 
  Block[{tmpexpr}, tmpexpr = expr /. NM :> List;
   sgn = Signature[tmpexpr];
+  (* Extract creation/annihilation operators *)
   creat = Union[Cases[tmpexpr, Field[__], \[Infinity]]];
   ann = Union[Cases[tmpexpr, FieldB[__], \[Infinity]]];
+  (* Create N! permutations of the annihilation operators*)
+  (* Signs are fixed using Mathematica Signature *)
   tmp1 = ((sgn*Signature[#]*NMM2[#]) & /@ ((Join[creat, #]) & /@ 
         Permutations[ann])) //. NMM2[{a__}] :> NMM2[a];
+  (* Perform contractions as a replacement of adjacent fields *) 
+  (* Remove contractions that give zero *)
   tmp2 = tmp1 //. {NMM2[xx___, Field[ferm1_, a_, b_, c_], 
         FieldB[ferm2_, d_, e_, f_], yy___] :> 
        DE[{ferm1, ferm2}, {f, c}][CI[{a, d}], SI[{b, e}]]*
@@ -192,6 +199,10 @@ WickContract1[expr_] :=
       NMM2[] -> 1} //. {DE[{ferm1_, ferm2_}, __][___] /; 
        ferm1 =!= ferm2 :> 0}; Plus @@ DeleteCases[Union[tmp2], 0]]
 
+
+(* primitives for the graph generation *)
+
+(* put arrow near the end, and label of propagators in the middle *)
 ed = ({Black, {Arrowheads[{{1/2, 1/2, 
         Graphics[{Black, 
           Inset[Style[#3, Background -> White], {0, 0}, Automatic, 
@@ -201,14 +212,15 @@ vd = ({Black, Text[
     Framed[#2, Background -> White, 
      RoundingRadius -> Scaled[10000]], #1]} &);
 
+(* EdgeRenderingFunction, ... superseded in Mathematica v12 *)
+
 If[$VersionNumber>=12,
 SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True,
 EdgeStyle:>{{Background->White}}],
 SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}]];
 
 GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3},
-
-
+(* Visualization of contractions *)
 t1 = Expand[expr /. {NM -> Times, Dot -> Times}];
 t2 = Rule[#, 1] & /@ DeleteCases[Variables[t1], DE[__][__], \[Infinity]];
 t3 = t1 /. t2 //. Times[b___, a_?NumberQ, c___] -> Times[b, c]/. Plus -> List;
@@ -225,7 +237,7 @@ Show[{#}]&/@(GraphPlot[#,rul] & /@
 ]
 ]
 
-
+(* This is a Kronecker-Delta *)
 SetAttributes[DD, Orderless]
 
 Contract[expr_]:=FixedPoint[Contract1,expr];
@@ -330,6 +342,8 @@ Dot[a___,DE[c__,{x_,y_}],DEInverse[c__,{y_,z_}],b___]:>DD[x,z]Dot[a,b]
      
 ]
 
+(* Function to order arguments in correct way for quarkContract of QDP *)
+ 
 ReorderIndex[f1_, 
   f2_, {alpha__}, {beta__}, {eps1__}, {eps2__}, {si1__}, {si2__}] := 
  Block[{},
