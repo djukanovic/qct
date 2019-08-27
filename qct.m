@@ -121,6 +121,7 @@ Format[MyProd[
 
 (* Declaration of externally accessible functions *)
 
+q$LookupProp="List of already identified propagators."
 GraphWC::usage="Visualization of Wick contracted expressions."
 adj::usage="Adjoint of the argument";
 G5::usage="gamma_5"
@@ -157,6 +158,8 @@ NM[a___, -c__, b___] := -NM[a, c, b]
 
 Begin[ "Private`"]
 
+
+q$LookupProp={}
 
 QF[expr_] := (Head[expr] === Field) || (Head[expr] === FieldB)
 
@@ -228,11 +231,10 @@ vd = ({Black, Text[
 (* EdgeRenderingFunction, ... superseded in Mathematica v12 *)
 
 If[$VersionNumber>=12,
-SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True,
-EdgeStyle:>{{Background->White}}],
+SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True,EdgeStyle:>{{Background->White}}}],
 SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}]];
 
-GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3},
+GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3,a,b,c,x,y},
 (* Visualization of contractions *)
 t1 = Expand[expr /. {NM -> Times, Dot -> Times}];
 t2 = Rule[#, 1] & /@ DeleteCases[Variables[t1], DE[__][__], \[Infinity]];
@@ -524,11 +526,13 @@ Dot[a___,DE[c__,{x_,y_}],DEInverse[c__,{y_,z_}],b___]:>DD[x,z]Dot[a,b]
 
 ToQDP[expr_, reps_: {} , fn_:"stdout"] := 
  Block[{res, props, propreps, iter = 0}, res = expr //. reps; 
-  props = Union[Cases[res, DE[__], \[Infinity],Heads->True]];
+  props = Union[Cases[res/.q$LookupProp, DE[__], \[Infinity],Heads->True]];
+  If[Length[props]>0,
   propreps = 
-   Flatten[(iter++; {Rule[#, 
+   Flatten[(iter=Unique["N"]; {Rule[#, 
          ToExpression["quarkProp" <> ToString[iter]]]}) & /@ props];
-
+  q$LookupProp=Flatten[Join[q$LookupProp,propreps]];
+];
   (*Print[Union[Cases[List[res],(H__)[CI[a__],SI[b__]]:>{a,b},\[Infinity],Heads->True]]];*)
   spincolorm=Length[Union[Cases[List[res],(H__)[CI[a__],SI[b__]]:>{a,b},\[Infinity],Heads->True]]];
   spinm=Length[Union[Cases[List[res],(H__)[SI[b__]]:>{b},\[Infinity],Heads->True]]];
@@ -548,12 +552,12 @@ ToQDP[expr_, reps_: {} , fn_:"stdout"] :=
 ];
   WriteString[fn, 
    ToString[
-     propreps /. 
+     q$LookupProp /. 
       DE[{a_, a_}, {x_, y_}] :> 
        "S^" <> ToString[a] <> "(" <> ToString[x] <> "," <> 
         ToString[y] <> ")"] <> "\n"];
   WriteString[fn, "*/ \n"];
-  WriteString[fn, CForm[res/.{(H__)[CI[__],SI[__]]:>H,(H__)[CI[__]]:>H,(H__)[SI[__]]:>H} /. propreps]];]
+  WriteString[fn, CForm[res/.{(H__)[CI[__],SI[__]]:>H,(H__)[CI[__]]:>H,(H__)[SI[__]]:>H} /.q$LookupProp]];]
 
 
 Uncontract[expr_] := FixedPoint[Uncontract1, expr]
