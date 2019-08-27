@@ -186,28 +186,34 @@ WickContract1[expr_] :=
   (* Extract creation/annihilation operators *)
   creat = Union[Cases[tmpexpr, Field[__], \[Infinity]]];
   ann = Union[Cases[tmpexpr, FieldB[__], \[Infinity]]];
-  (* Create N! permutations of the annihilation operators*)
-  (* Signs are fixed using Mathematica Signature *)
+  (* Create N! permutations of the annihilation operators *)
+  (* Signs are fixed using Mathematica Signature, that is *) 
+  (*                -1 if order is odd                    *)
+  (* Signature[] =   1 if order is even,                  *)
+  (* compared to original ordering of operators sgn       *)
   tmp1 = ((sgn*Signature[#]*NMM2[#]) & /@ ((Join[creat, #]) & /@ 
         Permutations[ann])) //. NMM2[{a__}] :> NMM2[a];
   (* Perform contractions as a replacement of adjacent fields *) 
-  (* Remove contractions that give zero *)
   tmp2 = tmp1 //. {NMM2[xx___, Field[ferm1_, a_, b_, c_], 
         FieldB[ferm2_, d_, e_, f_], yy___] :> 
        DE[{ferm1, ferm2}, {f, c}][CI[{a, d}], SI[{b, e}]]*
         NMM2[xx, yy], 
       NMM2[] -> 1} //. {DE[{ferm1_, ferm2_}, __][___] /; 
-       ferm1 =!= ferm2 :> 0}; Plus @@ DeleteCases[Union[tmp2], 0]]
+       ferm1 =!= ferm2 :> 0}; 
+  (* Remove contractions that give zero and sum all contractions *)
+      
+  Plus @@ DeleteCases[Union[tmp2], 0]]
 
 
-(* primitives for the graph generation *)
+(* Primitives for graph generation *)
 
-(* put arrow near the end, and label of propagators in the middle *)
+(* Put arrow near the end, and label of propagators in the middle *)
 ed = ({Black, {Arrowheads[{{1/2, 1/2, 
         Graphics[{Black, 
           Inset[Style[#3, Background -> White], {0, 0}, Automatic, 
            Automatic, None]}]}, {0.05032098685208049`, 0.8`}}], 
      Arrow[#1]}} &);
+(* Put space-time argument at vertex *)
 vd = ({Black, Text[
     Framed[#2, Background -> White, 
      RoundingRadius -> Scaled[10000]], #1]} &);
