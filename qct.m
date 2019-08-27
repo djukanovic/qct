@@ -222,7 +222,10 @@ vd = ({Black, Text[
     Framed[#2, Background -> White, 
      RoundingRadius -> Scaled[10000]], #1]} &);
 
-SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}];
+If[$VersionNumber>=12,
+SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True,
+EdgeStyle:>{{Background->White}}],
+SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}]];
 
 GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3},
 
