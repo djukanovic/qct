@@ -235,7 +235,7 @@ VertexRules=VertexCoordinateRules
 
 If[$VersionNumber>=12,
 
-SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,EdgeStyle:>{{Background->White}}}];VertexRule=VertexCoordinates,
+SetOptions[GraphPlot,{EdgeShapeFunction -> ({Black,Arrowheads[{{.05,.8}}],Arrow[#1]}&),VertexShapeFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,EdgeStyle:>{{Background->White}}}];VertexRules=VertexCoordinates,
 SetOptions[GraphPlot,{EdgeRenderingFunction -> ed,VertexRenderingFunction ->vd, SelfLoopStyle -> 1/4.,DirectedEdges->True,VertexLabeling->True}]];
 
 GraphWC[expr_,opts:OptionsPattern[]]:=Block[{t1,t2,t3,a,b,c,x,y},
