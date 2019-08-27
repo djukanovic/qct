@@ -193,7 +193,14 @@ WickContract1[expr_] :=
   (* compared to original ordering of operators sgn       *)
   tmp1 = ((sgn*Signature[#]*NMM2[#]) & /@ ((Join[creat, #]) & /@ 
         Permutations[ann])) //. NMM2[{a__}] :> NMM2[a];
-  (* Perform contractions as a replacement of adjacent fields *) 
+  (* Perform contractions as a replacement of adjacent fields            *) 
+  (* If one wants to switch the order of the space-time argument         *)
+  (* the following rule should be used (i.e. with f and c interchanged   *)
+  (* //. {NMM2[xx___, Field[ferm1_, a_, b_, c_], FieldB[ferm2_, d_, e_, f_], yy___] :> 
+       DE[{ferm1, ferm2}, {c, f}][CI[{a, d}], SI[{b, e}]]*NMM2[xx, yy]
+  *)
+  (* Note however the package has been checked only with the following   *)
+  (* default order                                                       *)
   tmp2 = tmp1 //. {NMM2[xx___, Field[ferm1_, a_, b_, c_], 
         FieldB[ferm2_, d_, e_, f_], yy___] :> 
        DE[{ferm1, ferm2}, {f, c}][CI[{a, d}], SI[{b, e}]]*
